@@ -48,6 +48,9 @@ const bookSchema = new mongoose.Schema({
     image: {
         type: String,
     },
+    pdf: {
+        type: String,
+    },
     // category: {
     //     type: String,
         

@@ -1,23 +1,16 @@
-const multer = require('multer');
-const fs = require('fs');
+exports.uploadFiles = (req, res) => {
+  console.log("req", req.files['pdf'])
+  try {
+    
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadDir = 'uploads/';
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir);
-    }
-    cb(null, uploadDir);
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
+    const imageFile = req.files['image'];
+    const pdfFile = req.files['pdf'];
+    
+    // You can perform further processing with the files here, such as saving them to a database or storage
 
-const upload = multer({ storage });
-
-exports.uploadFiles = upload.array('files[]'), (req, res) => {
-  // Handle file upload here
-  // req.files contains uploaded files
-  res.status(200).send('File uploaded successfully');
+    res.status(200).send('Files uploaded successfully');
+  } catch (error) {
+    console.error('Error uploading files:', error);
+    res.status(500).json({ message: 'Error uploading files', error });
+  }
 };

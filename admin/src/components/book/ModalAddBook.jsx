@@ -1,4 +1,4 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import { Formik } from "formik";
 import {
   Avatar,
@@ -45,42 +45,43 @@ const ModalAddBook = ({ open, handleClose }) => {
   const [AuthorSelected, setAuthorSelected] = useState([]);
   const [CategorySelected, setCategorySelected] = useState([]);
 
-
   const handleFileChange = async (e) => {
+    // const files = e.target.files;
+    // const formData = new FormData();
+
+    // for (let i = 0; i < files.length; i++) {
+    //   formData.append('files[]', files[i]);
+    // }
+
     const formData = new FormData();
-    for (let i = 0; i < e.target.files.length; i++) {
-      formData.append('files[]', e.target.files[i]);
+    const pdfFiles = e.target.files;
+
+    for (let i = 0; i < pdfFiles.length; i++) {
+      formData.append("pdf", pdfFiles[i]); // 'pdf' is the field name expected by the server
     }
 
-    console.log('formData', formData)
-
     try {
-      const response = await fetch('http://localhost:8000/upload', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+      const response = await fetch("http://localhost:8000/upload", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: "bearer " + process.env.REACT_APP_API_TOKEN,
+        },
+      });
       console.log(response.data);
       // Handle success
     } catch (error) {
-      console.error('Error uploading files:', error);
+      console.error("Error uploading files:", error);
       // Handle error
     }
   };
 
- 
-
- 
-const handleFormSubmit = (values) => {
-        values.category=CategorySelected
-        values.author=AuthorSelected
-      console.log(values);
-      dispatch(insertBook(values));
-    }
-  
-
+  const handleFormSubmit = (values) => {
+    values.category = CategorySelected;
+    values.author = AuthorSelected;
+    console.log(values);
+    dispatch(insertBook(values));
+  };
 
   const handleAuthor = (event) => {
     const value = event.target.value;
@@ -163,7 +164,6 @@ const handleFormSubmit = (values) => {
 
                   <label htmlFor="image">Upload Content</label>
                   <input type="file" multiple onChange={handleFileChange} />
-
 
                   <TextField
                     fullWidth

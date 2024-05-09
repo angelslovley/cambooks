@@ -1,4 +1,4 @@
-const Book = require('../models/book');
+const Book = require('../models/Book');
 
 exports.getBooks = async (req, res) => {
     try {
@@ -32,25 +32,38 @@ exports.getBook = async (req, res) => {
 
 
 exports.createBook = async (req, res) => {
-    
     try {
+        // Extracting fields from request body
+        const { title, author, ISBN, publisher, edition, description, price, category, stock, publishedyear, pages } = req.body;
 
-        const existingBook = await Book.findOne({ title: req.body.title });
+        // Creating new book instance
+        const newBook = new Book({
+            title,
+            author,
+            ISBN,
+            publisher,
+            edition,
+            description,
+            price,
+            category,
+            stock,
+            publishedyear,
+            pages,
+            image: req.files['image'][0].path, // Save image path
+            pdf: req.files['pdf'][0].path // Save pdf path
+        });
 
-        if (existingBook) {
-            return res.status(401).json({ message: 'A book with this title already exists' });
-        }
-        
-        const { title, author, ISBN, publisher, edition,description, price,  category, stock , publishedyear, pages , imageUrl , contentUrl} = req.body;
-        const newBook = new Book({ title, author, ISBN, publisher, edition, description, price,category, stock, publishedyear, pages , imageUrl , contentUrl });
+        // Save the book instance
+        const book = await newBook.save();
 
-       const book =await Book.create(newBook);
-
+        // Send response
         res.json({ book, message: 'Book created successfully' });
     } catch (error) {
+        // Error handling
         res.status(500).json({ message: 'Error creating book', error });
     }
 };
+
 
 
 exports.updateBook = async (req, res) => {
