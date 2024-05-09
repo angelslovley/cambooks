@@ -11,6 +11,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { Box } from "@mui/system";
+import { Paper } from "@mui/material";
 import { insertBook } from "../../store/bookSlice";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -103,7 +104,7 @@ const ModalAddBook = ({ open, handleClose }) => {
       aria-describedby="modal-modal-description"
     >
       <Grid item xs={12} sm={8} md={5} sx={style} square>
-        <Box>
+        <Paper sx={{ ...style, overflowY: "auto" }}>
           <Box
             sx={{
               my: 3,
@@ -298,7 +299,7 @@ const ModalAddBook = ({ open, handleClose }) => {
               </form>
             )}
           </Formik>
-        </Box>
+        </Paper>
       </Grid>
     </Modal>
   );

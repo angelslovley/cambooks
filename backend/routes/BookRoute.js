@@ -1,7 +1,5 @@
-const { getBooks, getBook, createBook, updateBook, deleteBook, searchBooks, filterBooks, getFeatBooks } = require("../controllers/BookController");
+const { getBooks, getBook, createBook, updateBook, deleteBook, searchBooks, filterBooks, getFeatBooks, checkBookSubscription } = require("../controllers/BookController");
 const { adminAuth } = require("../middleware/auth.js");
-
-
 const router = require("express").Router();
 
 router.get("/books", getBooks);
@@ -16,8 +14,11 @@ router.put("/books/:id",adminAuth , updateBook);
 
 router.delete("/books/:id",adminAuth , deleteBook);
 
-router.get("/books/search",searchBooks)
+router.get("/books/search",searchBooks);
 
-router.get("/books/filter",filterBooks)
+router.get("/books/filter",filterBooks);
+
+router.get('/books/:id/subscription', checkBookSubscription);
+
 
 module.exports = router;
