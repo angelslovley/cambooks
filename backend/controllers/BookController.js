@@ -9,14 +9,6 @@ exports.getBooks = async (req, res) => {
     }
 };
 
-// exports.getBooksByCategory = async (req, res) => {
-//     try {
-//         const books = await Book.find({ category: req.params.categoryId }).populate('category');
-//         res.json(books);
-//     } catch (error) {
-//         res.status(500).json({ message: 'Error getting books by category' });
-//     }
-// };
 
 exports.getFeatBooks = async (req, res) => {
     try {
@@ -49,8 +41,8 @@ exports.createBook = async (req, res) => {
             return res.status(401).json({ message: 'A book with this title already exists' });
         }
         
-        const { title, author, ISBN, publisher, edition,description, price,  category, stock } = req.body;
-        const newBook = new Book({ title, author, ISBN, publisher, edition, description, price,category, stock });
+        const { title, author, ISBN, publisher, edition,description, price,  category, stock , publishedyear, pages , imageUrl , contentUrl} = req.body;
+        const newBook = new Book({ title, author, ISBN, publisher, edition, description, price,category, stock, publishedyear, pages , imageUrl , contentUrl });
 
        const book =await Book.create(newBook);
 
@@ -120,27 +112,6 @@ console.log("deleted book ...");
 };
 
 
-
-// exports.searchBooks =async (req, res) => {
-//     const query = req.query;
-
-//    await Book.find(query, (err, books) => {
-//         if (err) {
-//             return res.status(500).json({
-//                 error: err
-//             });
-//         }
-//         if (!books) {
-//             return res.status(404).json({
-//                 message: 'No books found'
-//             });
-//         }
-//         res.status(200).json({
-//             books: books
-//         });
-//     });
-// };
-
 exports.searchBooks = (req, res) => {
     const query = req.query.q;
     Book.find({$or: [
@@ -162,45 +133,6 @@ exports.searchBooks = (req, res) => {
         );
     });
 };
-
-
-// exports.filterBooks = async (req, res) => {
-//     const { category, minPrice, maxPrice } = req.query;
-
-//     let query = {};
-//     if (category) {
-//         query.category = category;
-//     }
-//     if (minPrice && maxPrice) {
-//         query.price = { $gte: minPrice, $lte: maxPrice };
-//     } else if (minPrice) {
-//         query.price = { $gte: minPrice };
-//     } else if (maxPrice) {
-//         query.price = { $lte: maxPrice };
-//     }
-
-//     try {
-//          await Book.find(query,(err, books) => {
-//             if (err) {
-//                 return res.status(500).json({
-//                     error: err
-//                 });
-//             }
-//             if (!books) {
-//                 return res.status(404).json({
-//                     message: 'No books found'
-//                 });
-//             }
-//             res.status(200).json({
-//                 books: books
-//             });
-//         });
-      
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
-
 
 
 exports.filterBooks = (req, res) => {

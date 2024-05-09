@@ -10,6 +10,7 @@ import Search from "./pages/Search/Search";
 import Success from "./pages/success";
 import SignInSide from "./pages/Login/SignInSide";
 import SignUpSide from "./pages/Register/SignInSide";
+import BookDetails from "./components/BookDetail/BookDetail";
 const Layout = () => {
   return (
     <div className="app">
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: "/book/:id",
         element: <Product />,
+      },
+      {
+        path: "/books/:id",
+        element: <BookDetails />,
       },
     ],
   },

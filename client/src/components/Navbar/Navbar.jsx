@@ -149,6 +149,7 @@ const Navbar = () => {
           {localStorage.getItem('isLogedIn') && 
             <div className="cartIcon" onClick={()=>setOpen(!open)}>
               <ShoppingCartOutlinedIcon/>
+              <span>{products.length}</span>
             </div>}
 
 

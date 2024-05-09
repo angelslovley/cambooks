@@ -17,6 +17,7 @@ const usersRoute = require('./routes/UserRoute');
 const reviewRoute = require('./routes/ReviewRoute');
 const cartRoute = require('./routes/CartRoute');
 const orderRoute = require('./routes/OrderRoute');
+const uploadRoute = require('./routes/uploadRoute')
 
 const mongoose = require("mongoose");
 
@@ -57,5 +58,7 @@ app.use( CategoryRoute);
 app.use('/api/users', usersRoute);
 app.use( reviewRoute);
 app.use( "/cart",cartRoute);
+app.use('/upload', uploadRoute);
+
 
  

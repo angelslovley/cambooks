@@ -41,7 +41,8 @@ export const getBookId = createAsyncThunk(
     async (item, thunkAPI) => {
       const { rejectWithValue } = thunkAPI;
       try {
-        const res = await fetch(`http://localhost:8000/book/${item._id}`);
+        const itemId = typeof item === "object" ? item._id : item;
+        const res = await fetch(`http://localhost:8000/book/${itemId}`);
         const data = await res.json();
         console.log(data);
         return data;
