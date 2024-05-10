@@ -63,6 +63,7 @@ const ModalUpdateBook = ({open,handleClose}) => {
         const item = [book._id,values]
     
         dispatch(updateBook(item));
+        handleClose()
         
       };
 

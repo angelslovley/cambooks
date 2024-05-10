@@ -106,6 +106,7 @@ const ModalAddBook = ({ open, handleClose }) => {
     values.image = bookContent
     console.log("values",values);
     dispatch(insertBook(values));
+    handleClose()
   };
 
   const handleAuthor = (event) => {
