@@ -52,6 +52,23 @@ export const getBookId = createAsyncThunk(
     }
   );
 
+  export const getBookSubscription = createAsyncThunk(
+    "book/getBookSubscription",
+    async (item, thunkAPI) => {
+      const { rejectWithValue } = thunkAPI;
+      try {
+        const itemId = typeof item === "object" ? item._id : item;
+        const res = await fetch(`http://localhost:8000/books/${itemId}/subscription`);
+        const data = await res.json();
+        console.log(data);
+        return data;
+      } catch (error) {
+        return rejectWithValue(error.message);
+      }
+    }
+  );
+
+
 
   export const updateBook = createAsyncThunk(
     "book/updateBook",      

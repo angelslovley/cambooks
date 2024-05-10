@@ -198,7 +198,7 @@ exports.filterBooks = (req, res) => {
 
 exports.checkBookSubscription = async (req, res) => {
     try {
-        const bookId = req.params.bookId;
+        const bookId = req.params.id;
         const book = await Book.findById(bookId);
         if (!book) {
             return res.status(404).json({ message: 'Book not found' });
