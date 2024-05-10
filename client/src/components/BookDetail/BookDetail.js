@@ -60,10 +60,7 @@ const BookDetails = ({ item }) => {
           <Card
             style={{}}
             cover={
-              <img
-                alt="example"
-                src={book?.image}
-              />
+              <iframe src={book?.image} width="100%" height="500px"></iframe>
             }
           ></Card>
           <div
