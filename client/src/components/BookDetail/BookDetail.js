@@ -27,15 +27,17 @@ const BookDetails = ({ item }) => {
   
     fetchData();
   }, []);
+
   
   const success = () => {
+
     dispatch(
       addToCart({
-        id: item._id,
-        title: item.title,
-        desc: item.description,
-        price: item.price,
-        img: item.publisher,
+        id: book?._id,
+        title: book?.title,
+        desc: book?.description,
+        price: book?.price,
+        img: book?.publisher,
         quantity: 1,
       })
     );
@@ -60,7 +62,7 @@ const BookDetails = ({ item }) => {
             cover={
               <img
                 alt="example"
-                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                src={book?.image}
               />
             }
           ></Card>
@@ -86,7 +88,7 @@ const BookDetails = ({ item }) => {
           <div style={{ textAlign: "center", marginTop:20 }}>
             <Button
               variant="contained"
-              onClick={success}
+              onClick={() => window.open(book?.pdf,"_blank")}
               disableElevation
               style={{ marginRight: "10px" }} // Add spacing between buttons
             >
