@@ -32,7 +32,6 @@ const ModalAddBook = ({ open, handleClose }) => {
 
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.categories);
-  console.log(categories);
   const [authors, setAuthors] = useState([
     "yonko",
     "ali",
@@ -41,19 +40,13 @@ const ModalAddBook = ({ open, handleClose }) => {
     "yew",
     "kow",
   ]);
-  // const [categories, setCategories] = useState(["yonko","ali","ana","howa","yew","kow"])
 
   const [AuthorSelected, setAuthorSelected] = useState([]);
   const [CategorySelected, setCategorySelected] = useState([]);
+  const [bookContent,setBookContent] = useState("")
+  const [bookCover,setBookCover] = useState("")
 
   const handleFileChange = async (e) => {
-    // const files = e.target.files;
-    // const formData = new FormData();
-
-    // for (let i = 0; i < files.length; i++) {
-    //   formData.append('files[]', files[i]);
-    // }
-
     const formData = new FormData();
     const pdfFiles = e.target.files;
 
@@ -69,7 +62,9 @@ const ModalAddBook = ({ open, handleClose }) => {
           Authorization: "bearer " + process.env.REACT_APP_API_TOKEN,
         },
       });
-      console.log(response.data);
+      await console.log(response.json());
+     await setBookContent(response?.data?.path)
+     await setBookCover(response?.data?.path)
       // Handle success
     } catch (error) {
       console.error("Error uploading files:", error);
@@ -77,10 +72,38 @@ const ModalAddBook = ({ open, handleClose }) => {
     }
   };
 
+  const handleImageChange = async (e) => {
+    const formData = new FormData();
+    const imageFiles = e.target.files;
+
+    for (let i = 0; i < imageFiles.length; i++) {
+      formData.append("image", imageFiles[i]);
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/upload", {
+        method: "POST",
+        body: formData,
+        headers: {
+          Authorization: "bearer " + process.env.REACT_APP_API_TOKEN,
+        },
+      });
+      console.log(response.data);
+      setBookCover(response?.data?.path)
+      // Handle success
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      // Handle error
+    }
+  };
+
+
   const handleFormSubmit = (values) => {
     values.category = CategorySelected;
     values.author = AuthorSelected;
-    console.log(values);
+    values.pdf = bookCover;
+    values.image = bookContent
+    console.log("values",values);
     dispatch(insertBook(values));
   };
 
@@ -160,7 +183,7 @@ const ModalAddBook = ({ open, handleClose }) => {
                   <input
                     type="file"
                     accept="image/*"
-                    onChange={(event) => handleChange(event.target.files[0])}
+                    onChange={handleImageChange}
                   />
 
                   <label htmlFor="image">Upload Content</label>
@@ -315,10 +338,11 @@ const initialValues = {
   price: 0,
   category: [],
   stock: 0,
-  imgUrl: "",
-  contentUrl: "",
+  pdf: "",
+  image: "",
   pages: 0,
   publishedYear: 0,
+  pdf:""
 };
 
 export default ModalAddBook;

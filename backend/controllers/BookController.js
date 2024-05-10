@@ -52,7 +52,8 @@ exports.getBook = async (req, res) => {
 
 exports.createBook = async (req, res) => {
     try {
-        const { title, author, ISBN, publisher, edition, description, price, category, stock, publishedyear, pages } = req.body;
+        console.log("entered")
+        const { title, author, ISBN, publisher, edition, description, price, category, stock, publishedyear, pages , image ,pdf } = req.body;
         const newBook = new Book({
             title,
             author,
@@ -65,16 +66,19 @@ exports.createBook = async (req, res) => {
             stock,
             publishedyear,
             pages,
-            image: req.files['image'][0].path, 
-            pdf: req.files['pdf'][0].path 
+            image: image, 
+            pdf: pdf
         });
-        const book = await newBook.save();
-        const bookWithFiles = {
-            ...book.toObject(),
-            imageUrl: req.protocol + '://' + req.get('host') + book.image,
-            pdfUrl: req.protocol + '://' + req.get('host') + book.pdf
-        };
-        res.json({ book: bookWithFiles, message: 'Book created successfully' });
+        console.log("here")
+        await newBook.save();
+        res.status(200).json({ message: 'Book created successfully' });
+        // const bookWithFiles = {
+        //     ...book.toObject(),
+        //     imageUrl: req.protocol + '://' + req.get('host') + book.image,
+        //     pdfUrl: req.protocol + '://' + req.get('host') + book.pdf
+        // };
+        // res.json({  message: 'Book created successfully' });
+       
     } catch (error) {
         res.status(500).json({ message: 'Error creating book', error });
     }

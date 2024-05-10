@@ -9,9 +9,8 @@ cloudinary.config({
 
 
 exports.uploadFiles = (req, res) => {
-  console.log("req", req.files['pdf'])
   try {
-    const pdfFile = req.files['pdf'][0]; // Assuming you're using multer to handle file uploads
+    const pdfFile = req.files['pdf'][0];
     
     // Upload the PDF file to Cloudinary
     cloudinary.uploader.upload(pdfFile.path, function(error, result) {
