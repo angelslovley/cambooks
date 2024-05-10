@@ -62,9 +62,10 @@ const ModalAddBook = ({ open, handleClose }) => {
           Authorization: "bearer " + process.env.REACT_APP_API_TOKEN,
         },
       });
-      await console.log(response.json());
-     await setBookContent(response?.data?.path)
-     await setBookCover(response?.data?.path)
+      const responseData = await response.json();
+     await setBookContent(responseData?.path)
+     await setBookCover(responseData?.path)
+     console.log("bookCo", bookContent,responseData?.path)
       // Handle success
     } catch (error) {
       console.error("Error uploading files:", error);
