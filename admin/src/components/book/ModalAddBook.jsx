@@ -43,8 +43,10 @@ const ModalAddBook = ({ open, handleClose }) => {
 
   const [AuthorSelected, setAuthorSelected] = useState([]);
   const [CategorySelected, setCategorySelected] = useState([]);
-  const [bookContent,setBookContent] = useState("")
-  const [bookCover,setBookCover] = useState("")
+  const [bookContent, setBookContent] = useState("");
+  const [bookCover, setBookCover] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+
 
   const handleFileChange = async (e) => {
     const formData = new FormData();
@@ -63,9 +65,9 @@ const ModalAddBook = ({ open, handleClose }) => {
         },
       });
       const responseData = await response.json();
-     await setBookContent(responseData?.path)
-     await setBookCover(responseData?.path)
-     console.log("bookCo", bookContent,responseData?.path)
+      await setBookContent(responseData?.path);
+      await setBookCover(responseData?.path);
+      console.log("bookCo", bookContent, responseData?.path);
       // Handle success
     } catch (error) {
       console.error("Error uploading files:", error);
@@ -106,12 +108,14 @@ const ModalAddBook = ({ open, handleClose }) => {
     values.image = bookContent
     console.log("values",values);
     dispatch(insertBook(values));
-    handleClose()
+    handleClose();
   };
 
   const handleAuthor = (event) => {
     const value = event.target.value;
     setAuthorSelected(typeof value === "string" ? value.split(",") : value);
+    setMenuOpen(false);
+
   };
   const handleCategory = (event) => {
     const value = event.target.value;
@@ -235,7 +239,7 @@ const ModalAddBook = ({ open, handleClose }) => {
                     onBlur={handleBlur}
                     onChange={handleChange}
                     value={values.publishedYear}
-                    name="publishedyear"
+                    name="publishedYear"
                     sx={{ gridColumn: "span 2" }}
                   />
 
@@ -286,8 +290,12 @@ const ModalAddBook = ({ open, handleClose }) => {
                     value={AuthorSelected}
                     name="author"
                     sx={{ gridColumn: "span 4" }}
-                    SelectProps={{ multiple: true }}
-                  >
+                    SelectProps={{
+                      multiple: true,
+                      open: menuOpen, // Pass the open state to control the menu
+                      onOpen: () => setMenuOpen(true), // Set the open state when menu opens
+                      onClose: () => setMenuOpen(false), // Set the open state when menu closes
+                    }}                  >
                     {authors.map((elem, index) => {
                       return (
                         <MenuItem key={index} value={elem}>
@@ -344,7 +352,7 @@ const initialValues = {
   image: "",
   pages: 0,
   publishedYear: 0,
-  pdf:""
+  pdf: "",
 };
 
 export default ModalAddBook;
