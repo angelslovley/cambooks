@@ -36,7 +36,7 @@ exports.signup = async (req, res) => {
         });
        const cart = await newCart.save();
        console.log(cart);
-        const token = jwt.sign({ id },"niky" ,{expiresIn:"9000000"});
+        const token = jwt.sign({ id }, process.env.Prv_KEY ,{expiresIn:"9000000"});
         const cookieOption ={
             expires : new Date(Date.now()+90000000),
             secure:false,

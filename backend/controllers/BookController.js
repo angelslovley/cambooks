@@ -1,7 +1,9 @@
 const Book = require('../models/Book');
-const upload = require('../middleware/multerConfig'); 
 const Subscription = require('../models/Subscription');
 const User = require('../models/User');
+const { resolve } = require('url');
+const path = require('path');
+const mongoose = require('mongoose');
 
 
 exports.getBooks = async (req, res) => {
@@ -50,77 +52,100 @@ exports.getBook = async (req, res) => {
 
 
 
-exports.createBook = async (req, res) => {
-    try {
-        console.log("entered")
-        const { title, author, ISBN, publisher, edition, description, price, category, stock, publishedyear, pages , image ,pdf } = req.body;
-        const newBook = new Book({
-            title,
-            author,
-            ISBN,
-            publisher,
-            edition,
-            description,
-            price,
-            category,
-            stock,
-            publishedyear,
-            pages,
-            image: image, 
-            pdf: pdf
-        });
-        console.log("here")
-        await newBook.save();
-        res.status(200).json({ message: 'Book created successfully' });
-        // const bookWithFiles = {
-        //     ...book.toObject(),
-        //     imageUrl: req.protocol + '://' + req.get('host') + book.image,
-        //     pdfUrl: req.protocol + '://' + req.get('host') + book.pdf
-        // };
-        // res.json({  message: 'Book created successfully' });
-       
-    } catch (error) {
-        res.status(500).json({ message: 'Error creating book', error });
-    }
-};
+exports.createBook =  async (req, res) => {
+        try {
+            const { title, author, ISBN, publisher, publish_date, edition, pages, format, description, price, category, stock } = req.body;
+            const uploadedImage = req.files && req.files['image'] ? req.files['image'][0] : null;
+            const uploadedPdf = req.files && req.files['pdf'] ? req.files['pdf'][0] : null;
+        
+        
+            const baseUrl = req.protocol + '://' + req.get('host') + '/uploads/';
+            const imageUrl = uploadedImage ? resolve(baseUrl, `images/${uploadedImage.filename}`) : null;
+            const pdfUrl = uploadedPdf ? resolve(baseUrl, `pdf/${uploadedPdf.filename}`) : null;
+        
 
+            if (!imageUrl || !pdfUrl) {
+                return res.status(400).json({ message: 'Image and PDF files are required' });
+            }
+
+            const newBook = new Book({
+                title,
+                author: author.split(','),
+                ISBN,
+                publisher,
+                publish_date,
+                edition,
+                pages,
+                format,
+                description,
+                price,
+                image: imageUrl,
+                pdf: pdfUrl,
+                category: category.split(',').map(id => mongoose.Types.ObjectId(id)),
+                stock,
+              });
+            await newBook.save();
+
+            res.status(200).json({
+                book: newBook,
+                imageUrl,
+                pdfUrl,
+                message: 'Book created successfully'
+            });
+        }  catch (error) {
+            console.error('Error creating book:', error.message);
+            res.status(500).json({ message: 'Error creating book', error: error.message });
+        }
+    };
 
 
 exports.updateBook = async (req, res) => {
-    try 
-    {
-        const book = await Book.findById(req.params.id);
-        if (!book) {
-            return res.status(500).json({
-                message: 'Book not found'
+        try {
+            const { id } = req.params;
+            const { title, author, ISBN, publisher, publish_date, edition, pages, format, description, price, category, stock } = req.body;
+        
+            const uploadedImage = req.files && req.files['image'] ? req.files['image'][0] : null;
+            const uploadedPdf = req.files && req.files['pdf'] ? req.files['pdf'][0] : null;
+        
+            const baseUrl = req.protocol + '://' + req.get('host') + '/uploads/';
+            const imageUrl = uploadedImage ? resolve(baseUrl, `images/${uploadedImage.filename}`) : null;
+            const pdfUrl = uploadedPdf ? resolve(baseUrl, `pdf/${uploadedPdf.filename}`) : null;
+        
+            const updatedBook = await Book.findByIdAndUpdate(
+              id,
+              {
+                title,
+                author: author.split(','),
+                ISBN,
+                publisher,
+                publish_date,
+                edition,
+                pages,
+                format,
+                description,
+                price,
+                image: imageUrl,
+                pdf: pdfUrl,
+                category: category.split(',').map(id => mongoose.Types.ObjectId(id)),
+                stock,
+              },
+              { new: true }
+            );
+        
+            if (!updatedBook) {
+              return res.status(404).json({ message: 'Book not found' });
+            }
+        
+            res.status(200).json({
+              book: updatedBook,
+              message: 'Book updated successfully',
             });
-        }
-
-        book.title = req.body.title;
-        book.author = req.body.author;
-        book.publisher = req.body.publisher;
-        book.ISBN = req.body.ISBN;
-        book.publish_date = req.body.publish_date;
-        book.edition = req.body.edition;
-        book.pages = req.body.pages;
-        book.format = req.body.format;
-        book.description = req.body.description;
-        book.price = req.body.price;
-        book.category = req.body.category;
-        book.stock = req.body.stock;
-        if (req.files && req.files['image']) {
-            book.image = req.files['image'][0].path;
-        }
-        if (req.files && req.files['pdf']) {
-            book.pdf = req.files['pdf'][0].path;
-        }
-        const updatedBook = await book.save();
-
-        res.json({ updatedBook, message: 'Book updated successfully' });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};
+          }
+          catch (error) {
+            console.error('Error updating book:', error.message);
+            res.status(500).json({ message: 'Error updating book', error: error.message });
+          }
+    };
 
 
 exports.deleteBook =async (req, res) => {
@@ -213,5 +238,39 @@ exports.checkBookSubscription = async (req, res) => {
         res.json({ subscribed: true, subscribedUsers });
     } catch (error) {
         res.status(500).json({ message: 'Error checking book subscription', error });
+    }
+};
+
+
+exports.subscribeToBook = async (req, res) => {
+    try {
+        const userId = req.body.userId;
+        const bookId = req.body.bookId;
+        const book = await Book.findById(bookId);
+        if (!book) {
+            return res.status(404).json({ message: 'Book not found' });
+        }
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        const subscription = await Subscription.findOne({ book: bookId });
+        if (subscription && subscription.users.includes(userId)) {
+            return res.status(400).json({ message: 'User is already subscribed to this book' });
+        }
+        if (!subscription) {
+            const newSubscription = new Subscription({
+                book: bookId,
+                users: [userId]
+            });
+            await newSubscription.save();
+        } else {
+            subscription.users.push(userId);
+            await subscription.save();
+        }
+
+        res.status(200).json({ message: 'User subscribed to the book successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error subscribing user to the book', error });
     }
 };

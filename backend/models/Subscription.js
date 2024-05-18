@@ -4,8 +4,7 @@ const subscriptionSchema = new mongoose.Schema({
     book: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Book',
-        required: true,
-        unique: true
+        required: true
     },
     users: [{
         type: mongoose.Schema.Types.ObjectId,

@@ -1,11 +1,17 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 // const { adminAuth, userAuth } = require("./middleware/auth");
 const bodyParser = require("body-parser"); 
+const path = require('path');
+
+const app = express();
 
 const PORT = 8000;
 
-const app = express();
+
+app.use(express.json());
+/*app.use(express.urlencoded({ extended: false }));*/
 
 app.use(bodyParser.json());
 // app.get("/admin", adminAuth, (req, res) => res.send("Admin Route"));
@@ -17,19 +23,15 @@ const usersRoute = require('./routes/UserRoute');
 const reviewRoute = require('./routes/ReviewRoute');
 const cartRoute = require('./routes/CartRoute');
 const orderRoute = require('./routes/OrderRoute');
-const uploadRoute = require('./routes/uploadRoute')
 
-const mongoose = require("mongoose");
+
+mongoose.set('strictQuery', true);
 
 const cors = require("cors");
 
 app.use(cookieParser());
 
 app.use(cors());
-
-app.use(express.json());
-/*app.use(express.urlencoded({ extended: false }));*/
-
 
 const dotenv = require("dotenv");
 
@@ -53,12 +55,18 @@ mongoose
 app.listen(PORT, async () => {
   console.log(`server up on port ${PORT}`);
 });
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use( bookRoute);
 app.use( CategoryRoute);
 app.use('/api/users', usersRoute);
 app.use( reviewRoute);
 app.use( "/cart",cartRoute);
-app.use('/upload', uploadRoute);
+// app.use('/upload', uploadRoute);
 
 
  
