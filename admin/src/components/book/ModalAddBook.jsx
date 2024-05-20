@@ -47,7 +47,6 @@ const ModalAddBook = ({ open, handleClose }) => {
   const [bookCover, setBookCover] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
 
-
   const handleFileChange = async (e) => {
     const formData = new FormData();
     const pdfFiles = e.target.files;
@@ -56,23 +55,7 @@ const ModalAddBook = ({ open, handleClose }) => {
       formData.append("pdf", pdfFiles[i]); // 'pdf' is the field name expected by the server
     }
 
-    try {
-      const response = await fetch("http://localhost:8000/upload", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: "bearer " + process.env.REACT_APP_API_TOKEN,
-        },
-      });
-      const responseData = await response.json();
-      await setBookContent(responseData?.path);
-      await setBookCover(responseData?.path);
-      console.log("bookCo", bookContent, responseData?.path);
-      // Handle success
-    } catch (error) {
-      console.error("Error uploading files:", error);
-      // Handle error
-    }
+    setBookContent(formData)
   };
 
   const handleImageChange = async (e) => {
@@ -83,30 +66,16 @@ const ModalAddBook = ({ open, handleClose }) => {
       formData.append("image", imageFiles[i]);
     }
 
-    try {
-      const response = await fetch("http://localhost:8000/upload", {
-        method: "POST",
-        body: formData,
-        headers: {
-          Authorization: "bearer " + process.env.REACT_APP_API_TOKEN,
-        },
-      });
-      console.log(response.data);
-      setBookCover(response?.data?.path)
-      // Handle success
-    } catch (error) {
-      console.error("Error uploading files:", error);
-      // Handle error
-    }
+    setBookCover(formData);
   };
 
-
   const handleFormSubmit = (values) => {
+    console.log("cook", bookCover)
     values.category = CategorySelected;
     values.author = AuthorSelected;
     values.pdf = bookCover;
-    values.image = bookContent
-    console.log("values",values);
+    values.image = bookContent;
+    console.log("values", values);
     dispatch(insertBook(values));
     handleClose();
   };
@@ -115,7 +84,6 @@ const ModalAddBook = ({ open, handleClose }) => {
     const value = event.target.value;
     setAuthorSelected(typeof value === "string" ? value.split(",") : value);
     setMenuOpen(false);
-
   };
   const handleCategory = (event) => {
     const value = event.target.value;
@@ -295,7 +263,8 @@ const ModalAddBook = ({ open, handleClose }) => {
                       open: menuOpen, // Pass the open state to control the menu
                       onOpen: () => setMenuOpen(true), // Set the open state when menu opens
                       onClose: () => setMenuOpen(false), // Set the open state when menu closes
-                    }}                  >
+                    }}
+                  >
                     {authors.map((elem, index) => {
                       return (
                         <MenuItem key={index} value={elem}>
@@ -348,11 +317,11 @@ const initialValues = {
   price: 0,
   category: [],
   stock: 0,
-  pdf: "",
-  image: "",
+  pdf: null, // Set initial value to null for pdf
+  image: null, // Set initial value to null for image
   pages: 0,
   publishedYear: 0,
-  pdf: "",
 };
+
 
 export default ModalAddBook;
