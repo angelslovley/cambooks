@@ -43,38 +43,33 @@ const ModalAddBook = ({ open, handleClose }) => {
 
   const [AuthorSelected, setAuthorSelected] = useState([]);
   const [CategorySelected, setCategorySelected] = useState([]);
-  const [bookContent, setBookContent] = useState("");
-  const [bookCover, setBookCover] = useState("");
+  const [bookContent, setBookContent] = useState(null);
+  const [bookCover, setBookCover] = useState(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
   const handleFileChange = async (e) => {
-    const formData = new FormData();
-    const pdfFiles = e.target.files;
+    const data = new FormData();
+    const imagedata = e.target.files[0];
+    data.append("pdf", imagedata);
 
-    for (let i = 0; i < pdfFiles.length; i++) {
-      formData.append("pdf", pdfFiles[i]); // 'pdf' is the field name expected by the server
-    }
-
-    setBookContent(formData)
+    console.log(data.get("pdf"));
+    setBookContent(data.get("pdf"));
   };
 
   const handleImageChange = async (e) => {
-    const formData = new FormData();
-    const imageFiles = e.target.files;
-
-    for (let i = 0; i < imageFiles.length; i++) {
-      formData.append("image", imageFiles[i]);
-    }
-
-    setBookCover(formData);
+    const data = new FormData();
+    const imagedata = e.target.files[0];
+    data.append("image", imagedata);
+    console.log(data.get("image"));
+    setBookCover(data.get("image"));
   };
 
   const handleFormSubmit = (values) => {
-    console.log("cook", bookCover)
+    console.log("cook", bookCover);
     values.category = CategorySelected;
     values.author = AuthorSelected;
-    values.pdf = bookCover;
-    values.image = bookContent;
+    values.pdf = bookContent;
+    values.image = bookCover;
     console.log("values", values);
     dispatch(insertBook(values));
     handleClose();
@@ -322,6 +317,5 @@ const initialValues = {
   pages: 0,
   publishedYear: 0,
 };
-
 
 export default ModalAddBook;
