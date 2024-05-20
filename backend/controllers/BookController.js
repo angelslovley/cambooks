@@ -50,20 +50,9 @@ exports.getBook = async (req, res) => {
 
 exports.createBook = async (req, res) => {
   try {
-    const {
-      title,
-      author,
-      ISBN,
-      publisher,
-      publish_date,
-      edition,
-      pages,
-      format,
-      description,
-      price,
-      category,
-      stock,
-    } = req.body;
+    const data = req.body.data;
+    const jsonData = JSON.parse(data);
+
     const uploadedImage =
       req.files && req.files["image"] ? req.files["image"][0] : null;
     const uploadedPdf =
@@ -83,20 +72,31 @@ exports.createBook = async (req, res) => {
         .json({ message: "Image and PDF files are required" });
     }
 
+    const title = jsonData.title;
+    const author = jsonData.author;
+    const ISBN = jsonData.ISBN;
+    const description = jsonData.description;
+    const edition = jsonData.edition;
+    const pages = jsonData.pages;
+    const price = jsonData.price;
+    const publishedYear = jsonData.publishedYear;
+    const publisher = jsonData.publisher;
+    const stock = jsonData.stock;
+    const publish_date = jsonData.publish_date;
+
     const newBook = new Book({
       title,
-      author: author.split(","),
+      author,
       ISBN,
       publisher,
       publish_date,
       edition,
       pages,
-      format,
       description,
       price,
       image: imageUrl,
       pdf: pdfUrl,
-      category: category.split(",").map((id) => mongoose.Types.ObjectId(id)),
+      category: "663336846a54b060d4c93baf",
       stock,
     });
     await newBook.save();
