@@ -47,13 +47,14 @@ const Card = ({ item }) => {
   const handleViewDetails = () => {
     window.open(`/books/${item._id}`, '_blank');
   };
+
   
   return (
     <>
       <div className="card">
         <Link className="link">
           <div className="image">
-            <img src={item.publisher} alt="" className="mainImg" />
+            <img src={item.image} alt="" className="mainImg" />
           </div>
           <p
             style={{
