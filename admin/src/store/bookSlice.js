@@ -67,31 +67,51 @@ dispatch(getBooks())
   }
 );
 
+
 export const insertBook = createAsyncThunk(
   "book/insertBook",
   async (bookData, thunkAPI) => {
     const { rejectWithValue, getState, dispatch } = thunkAPI;
     const state = getState();
-     const token = state.users.token;
+    const token = state.users.token;
+
     try {
-      const state = getState();
-      const token = state.users.token;
-      console.log("tokenSTATE", token);
+      // Create FormData object
+      const formData = new FormData();
+
+      // Append stringified JSON data
+      formData.append("data", JSON.stringify({
+        category: bookData.category,
+        author: bookData.author,
+        title: bookData.title,
+        ISBN: bookData.ISBN,
+        description: bookData.description,
+        edition: bookData.edition,
+        pages: bookData.pages,
+        price: bookData.price,
+        publishedYear: bookData.publishedYear,
+        stock: bookData.stock,
+        publisher: bookData.publisher,
+      }));
+
+      // Append file fields
+      formData.append("pdf", bookData.pdf);
+      formData.append("image", bookData.image);
+
       const res = await fetch("http://localhost:8000/books", {
         method: "POST",
-        body: JSON.stringify(bookData),
+        body: formData,
         headers: {
-          "Content-type": "application/json; charset=UTF-8",
           Authorization: `Bearer ${token}`,
-          Cookie: `ms2a=${token}`, 
         },
       });
-      //report
+
       const data = await res.json();
       if (res.status >= 400) {
         return rejectWithValue(data.message);
       }
-      dispatch(getBooks())
+
+      dispatch(getBooks());
       dispatch(logInsert({ name: "insertBook", status: "success" }));
       return data;
     } catch (error) {
@@ -100,6 +120,7 @@ export const insertBook = createAsyncThunk(
     }
   }
 );
+
 
 export const deleteBook = createAsyncThunk(
   "book/deleteBook",
