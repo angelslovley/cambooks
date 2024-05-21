@@ -67,7 +67,7 @@ const ModalAddBook = ({ open, handleClose }) => {
   const handleFormSubmit = (values) => {
     console.log("cook", bookCover);
     values.category = CategorySelected;
-    values.author = AuthorSelected;
+    // values.author = AuthorSelected;
     values.pdf = bookContent;
     values.image = bookCover;
     console.log("values", values);
@@ -245,29 +245,18 @@ const ModalAddBook = ({ open, handleClose }) => {
                   />
 
                   <TextField
-                    fullWidth
                     variant="filled"
-                    select
+                    type="text"
                     label="Authors"
-                    onChange={handleAuthor}
-                    value={AuthorSelected}
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.author}
                     name="author"
+                    rows={2}
+                    multiline
                     sx={{ gridColumn: "span 4" }}
-                    SelectProps={{
-                      multiple: true,
-                      open: menuOpen, // Pass the open state to control the menu
-                      onOpen: () => setMenuOpen(true), // Set the open state when menu opens
-                      onClose: () => setMenuOpen(false), // Set the open state when menu closes
-                    }}
-                  >
-                    {authors.map((elem, index) => {
-                      return (
-                        <MenuItem key={index} value={elem}>
-                          {elem}
-                        </MenuItem>
-                      );
-                    })}
-                  </TextField>
+                  />
+
                   <TextField
                     fullWidth
                     variant="filled"
@@ -304,7 +293,7 @@ const ModalAddBook = ({ open, handleClose }) => {
 
 const initialValues = {
   title: "",
-  author: [],
+  author: "",
   ISBN: "",
   publisher: "",
   edition: 0,
